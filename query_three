@@ -1,0 +1,42 @@
+SELECT g.name AS genre_name, COUNT(ag.artist_id) AS artist_count
+FROM genres g
+LEFT JOIN artists_genres ag ON g.id = ag.genre_id
+GROUP BY g.id, g.name
+ORDER BY artist_count DESC;
+
+
+SELECT COUNT(t.id) AS track_count
+FROM tracks t
+JOIN albums a ON t.album_id = a.id
+WHERE a.release_year BETWEEN 2019 AND 2020;
+
+
+SELECT a.title AS album_title, 
+       ROUND(AVG(t.duration), 2) AS avg_duration_seconds,
+       ROUND(AVG(t.duration)/60, 2) AS avg_duration_minutes
+FROM albums a
+JOIN tracks t ON a.id = t.album_id
+GROUP BY a.id, a.title
+ORDER BY avg_duration_seconds DESC;
+
+
+SELECT DISTINCT ar.name AS artist_name
+FROM artists ar
+WHERE ar.id NOT IN (
+    SELECT DISTINCT aa.artist_id
+    FROM album_artists aa
+    JOIN albums a ON aa.album_id = a.id
+    WHERE a.release_year = 2020
+)
+ORDER BY ar.name;
+
+
+SELECT DISTINCT c.title AS compilation_title, c.release_year
+FROM compilations c
+JOIN compilation_tracks ct ON c.id = ct.compilation_id
+JOIN tracks t ON ct.track_id = t.id
+JOIN albums a ON t.album_id = a.id
+JOIN album_artists aa ON a.id = aa.album_id
+JOIN artists ar ON aa.artist_id = ar.id
+WHERE ar.name = 'Taylor Swift'
+ORDER BY c.release_year DESC;
